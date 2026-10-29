@@ -100,15 +100,22 @@ def load_c_engine():
     project_root = Path(__file__).resolve().parent.parent.parent
     lib_path = project_root / "libgrit.so"
     if not lib_path.exists():
-        cmd = (
-            f"gcc -std=c23 -shared -fPIC -Wall -Wextra -pthread -I{project_root}/src -I{project_root}/include -L{project_root}/lib "
-            f"{project_root}/src/core/watcher.c {project_root}/src/core/simulator.c "
-            f"{project_root}/src/mentor/command_guard.c {project_root}/src/mentor/llm_client.c "
-            f"{project_root}/src/db/db.c -lsqlite3 -lcurl -o {lib_path}"
-        )
-        rc = os.system(cmd)
-        if rc != 0:
-            raise RuntimeError(f"Compilation of libgrit.so failed with code {rc}")
+        compile_args = [
+            "gcc", "-std=c23", "-shared", "-fPIC", "-Wall", "-Wextra", "-pthread",
+            f"-I{project_root}/src",
+            f"-I{project_root}/include",
+            f"-L{project_root}/lib",
+            str(project_root / "src" / "core" / "watcher.c"),
+            str(project_root / "src" / "core" / "simulator.c"),
+            str(project_root / "src" / "mentor" / "command_guard.c"),
+            str(project_root / "src" / "mentor" / "llm_client.c"),
+            str(project_root / "src" / "db" / "db.c"),
+            "-lsqlite3", "-lcurl",
+            "-o", str(lib_path)
+        ]
+        res = subprocess.run(compile_args, capture_output=True, text=True)
+        if res.returncode != 0:
+            raise RuntimeError(f"Compilation of libgrit.so failed: {res.stderr}")
 
     lib = ctypes.CDLL(str(lib_path))
 
@@ -222,7 +229,13 @@ def extract_commands(text):
     return valid[:4]
 
 def create_user_bubble(text):
-    """Constructs a right-aligned compact rounded pill for user messages."""
+    """
+    Constructs an Apple iMessage-style right-aligned user bubble.
+    - Vibrant blue gradient
+    - Dynamic corner radii (sharper on bottom right: 18px 18px 4px 18px)
+    - Constrained max width (never stretched full-width)
+    - Hit-state cursor and text selection
+    """
     row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
     row.add_css_class("user-bubble-box")
     row.set_halign(Gtk.Align.END)
@@ -243,7 +256,7 @@ def create_user_bubble(text):
     return row
 
 def create_command_card(cmd_text, c_engine, copy_cb, caution_cb, run_cb=None):
-    """Constructs an interactive dark monospace terminal box for commands."""
+    """Constructs a sleek, semi-transparent terminal card (.ultraThinMaterial)."""
     card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
     card.add_css_class("command-card")
 
@@ -254,12 +267,23 @@ def create_command_card(cmd_text, c_engine, copy_cb, caution_cb, run_cb=None):
     header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
     header.add_css_class("command-card-header")
 
-    dots_lbl = Gtk.Label(label="● ● ●")
-    dots_lbl.add_css_class("command-card-dots")
-    header.append(dots_lbl)
+    # Terminal Traffic Light Dots
+    dots_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+    dots_box.add_css_class("terminal-traffic-dots")
+    d1 = Gtk.Label(label="●")
+    d1.add_css_class("dot-red")
+    d2 = Gtk.Label(label="●")
+    d2.add_css_class("dot-yellow")
+    d3 = Gtk.Label(label="●")
+    d3.add_css_class("dot-green")
+    dots_box.append(d1)
+    dots_box.append(d2)
+    dots_box.append(d3)
+    header.append(dots_box)
 
     badge = Gtk.Label()
     action_btn = Gtk.Button.new_from_icon_name("edit-copy-symbolic")
+    action_btn.add_css_class("command-copy-btn")
     action_btn.add_css_class("flat")
 
     if safety == CMD_SAFE:
@@ -280,7 +304,7 @@ def create_command_card(cmd_text, c_engine, copy_cb, caution_cb, run_cb=None):
     header.append(badge)
 
     tool_lbl = Gtk.Label()
-    tool_lbl.set_markup(f"<tt><span foreground='#8c8c9a'>bin: {binary_name}</span></tt>")
+    tool_lbl.set_markup(f"<tt><span foreground='rgba(255,255,255,0.45)'>bin: {binary_name}</span></tt>")
     tool_lbl.set_xalign(0.0)
     tool_lbl.set_hexpand(True)
     header.append(tool_lbl)
@@ -288,6 +312,7 @@ def create_command_card(cmd_text, c_engine, copy_cb, caution_cb, run_cb=None):
     # Optional 1-click Run button for safe observational commands
     if safety == CMD_SAFE and run_cb and binary_name in ["ss", "who", "tail", "ufw"]:
         run_btn = Gtk.Button.new_from_icon_name("media-playback-start-symbolic")
+        run_btn.add_css_class("command-copy-btn")
         run_btn.add_css_class("flat")
         run_btn.set_tooltip_text(f"Execute safe diagnostic `{cmd_text}`")
         run_btn.connect("clicked", lambda b: run_cb(cmd_text))
@@ -311,19 +336,36 @@ def create_command_card(cmd_text, c_engine, copy_cb, caution_cb, run_cb=None):
     return card
 
 def create_mentor_bubble(text, model_name, c_engine, copy_cb, caution_cb, run_cb=None):
-    """Constructs a structured mentor card with avatar header, Socratic callout, and command cards."""
-    row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-    row.add_css_class("mentor-bubble-box")
+    """
+    Constructs an unbounded mentor message flowing directly on the window background.
+    Strictly follows Apple macOS Sequoia HIG:
+    - No bounding box around the mentor's text
+    - Glowing SF Symbol avatar (sparkles/cpu) to the left
+    - Generous line leading
+    - Sleek frosted glass Socratic callout
+    - Semi-transparent terminal command cards with hover-activated copy button
+    """
+    row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+    row.add_css_class("mentor-flow-row")
     row.set_halign(Gtk.Align.START)
 
+    # Avatar Container with glowing halo
+    avatar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+    avatar_box.set_valign(Gtk.Align.START)
+    avatar_box.add_css_class("mentor-avatar-glow-box")
+
+    avatar_icon = Gtk.Image.new_from_icon_name("starred-symbolic")
+    avatar_icon.set_pixel_size(16)
+    avatar_box.append(avatar_icon)
+    row.append(avatar_box)
+
+    # Main text flow container (Unbounded - No card background, no bounding box!)
     card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-    card.add_css_class("mentor-bubble")
+    card.add_css_class("mentor-flow-content")
+    card.set_hexpand(True)
 
     # Header
     header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-    avatar = Gtk.Image.new_from_icon_name("security-high-symbolic")
-    header.append(avatar)
-
     title_lbl = Gtk.Label(label="Grit Mentor")
     title_lbl.add_css_class("mentor-header-title")
     header.append(title_lbl)
@@ -351,7 +393,7 @@ def create_mentor_bubble(text, model_name, c_engine, copy_cb, caution_cb, run_cb
         content_lbl.set_markup(markdown_to_pango(main_text))
         content_lbl.set_xalign(0.0)
         content_lbl.set_wrap(True)
-        content_lbl.set_max_width_chars(75)
+        content_lbl.set_max_width_chars(80)
         content_lbl.set_selectable(True)
         content_lbl.add_css_class("mentor-body-text")
         card.append(content_lbl)
@@ -374,7 +416,7 @@ def create_mentor_bubble(text, model_name, c_engine, copy_cb, caution_cb, run_cb
         c_lbl.set_markup(markdown_to_pango(callout_text))
         c_lbl.set_xalign(0.0)
         c_lbl.set_wrap(True)
-        c_lbl.set_max_width_chars(70)
+        c_lbl.set_max_width_chars(75)
         c_lbl.set_selectable(True)
         callout_box.append(c_lbl)
         card.append(callout_box)
@@ -534,15 +576,20 @@ class GritModernWindow(Adw.ApplicationWindow):
         self.set_size_request(960, 640)
         self.c_engine = c_engine
 
-        # Ensure database is initialized (with automatic fallback to writable location)
-        if not self.c_engine.grit_db_init(None):
-            self.c_engine.grit_db_init(b"/tmp/grit_db.sqlite")
+        # Secure user-isolated data directory (XDG compliant, 0700 permissions)
+        user_data_dir = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / "grit"
+        user_data_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
 
-        # Monitored file path
+        # Ensure database is initialized (with automatic fallback to secure user XDG location)
+        if not self.c_engine.grit_db_init(None):
+            self.c_engine.grit_db_init(str(user_data_dir / "grit.db").encode("utf-8"))
+
+        # Monitored file path (fallback to secure user-owned log file if /var/log/auth.log unreadable)
         self.target_log_file = "/var/log/auth.log"
         if not os.access(self.target_log_file, os.R_OK):
-            self.target_log_file = "/tmp/grit_auth.log"
-            Path(self.target_log_file).touch()
+            self.target_log_file = str(user_data_dir / "auth.log")
+            if not os.path.exists(self.target_log_file):
+                Path(self.target_log_file).touch(mode=0o600)
 
         # Initialize Watcher Context
         self.watcher_ctx = WatcherContextC()
@@ -595,26 +642,23 @@ class GritModernWindow(Adw.ApplicationWindow):
             )
 
     def _build_interface(self):
-        # 1. Main Toast Overlay
+        # 1. Main Control Center Style Toast Overlay
         self.toast_overlay = Adw.ToastOverlay()
         self.set_content(self.toast_overlay)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.toast_overlay.set_child(main_box)
 
-        # 2. Modern HeaderBar with ViewSwitcher
-        self.view_stack = Adw.ViewStack()
-        self.view_stack.set_vexpand(True)
-        self.view_stack.set_hexpand(True)
-
+        # 2. Native Transparent Unified Title Bar (macOS Sequoia Chrome)
         header = Adw.HeaderBar()
+        header.add_css_class("flat")
 
-        # Left Header: App Brand Emblem + Title
+        # Left Header: App Brand Emblem + Typography
         brand_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         brand_box.add_css_class("grit-brand-box")
 
         app_icon = Gtk.Image.new_from_icon_name("org.grit.workstation")
-        app_icon.set_pixel_size(24)
+        app_icon.set_pixel_size(20)
         brand_box.append(app_icon)
 
         title_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -631,18 +675,18 @@ class GritModernWindow(Adw.ApplicationWindow):
 
         header.pack_start(brand_box)
 
-        # Latency Badge
+        # Latency Badge (Glass Pill)
         self.latency_badge = Gtk.Label(label="⚡ ~510 µs")
         self.latency_badge.add_css_class("grit-latency-badge")
         header.pack_start(self.latency_badge)
 
-        # Center View Switcher
-        switcher = Adw.ViewSwitcher()
-        switcher.set_stack(self.view_stack)
-        switcher.set_policy(Adw.ViewSwitcherPolicy.WIDE)
-        header.set_title_widget(switcher)
+        # Center Title
+        self.header_title_lbl = Gtk.Label(label="Mentor Stream")
+        self.header_title_lbl.add_css_class("grit-brand-title")
+        header.set_title_widget(self.header_title_lbl)
 
-        # Right Header: Inotify Switch + LLM Pill + Menu
+        # Right Header: Inotify Switch + LLM Dropdown + Status Pill + Menu
+        # Top Trailing Edge: Native Watcher Switch
         switch_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         self.pulse_label = Gtk.Label(label="○ Inactive")
         self.pulse_label.add_css_class("grit-pulse-inactive")
@@ -659,30 +703,281 @@ class GritModernWindow(Adw.ApplicationWindow):
         self.pill_ollama.add_css_class("grit-pill-offline")
         header.pack_end(self.pill_ollama)
 
+        # LLM Model Selector Dropdown in Toolbar
+        self.model_combo = Gtk.DropDown.new_from_strings(self.available_models)
+        self.model_combo.connect("notify::selected", self._on_model_changed)
+        header.pack_end(self.model_combo)
+
         # Workstation Action Menu Button
         menu_btn = self._build_menu_button()
         header.pack_end(menu_btn)
 
         main_box.append(header)
 
-        # 3. Build the 4 Specialized Workstation Views
+        # 3. Horizontal Paned Workspace (Translucent Sidebar + Main Content)
+        self.workspace_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        self.workspace_paned.set_position(310)
+        self.workspace_paned.set_shrink_start_child(False)
+        self.workspace_paned.set_shrink_end_child(False)
+        self.workspace_paned.set_vexpand(True)
+        self.workspace_paned.set_hexpand(True)
+
+        # Translucent Sidebar (Apple macOS Sequoia Sidebar Material)
+        sidebar = self._build_workstation_sidebar()
+        self.workspace_paned.set_start_child(sidebar)
+
+        # Main Content Views (Elevated Dark Background)
+        self.view_stack = Adw.ViewStack()
+        self.view_stack.set_vexpand(True)
+        self.view_stack.set_hexpand(True)
+
         # View 1: Mentor Dialogue & Live Chat Workstation
-        view_mentor = self._build_mentor_view()
-        self.view_stack.add_titled_with_icon(view_mentor, "mentor", "Mentor", "dialog-information-symbolic")
+        view_mentor = self._build_chat_panel()
+        self.view_stack.add_titled(view_mentor, "mentor", "Mentor Stream")
 
         # View 2: Security Log Monitor & Triage
         view_triage = self._build_triage_view()
-        self.view_stack.add_titled_with_icon(view_triage, "triage", "Log Triage", "security-medium-symbolic")
+        self.view_stack.add_titled(view_triage, "triage", "Log Triage")
 
         # View 3: Defense Matrix & Gamified Skill Tree
         view_matrix = self._build_defense_matrix_view()
-        self.view_stack.add_titled_with_icon(view_matrix, "matrix", "Defense Matrix", "emblem-favorite-symbolic")
+        self.view_stack.add_titled(view_matrix, "matrix", "Defense Matrix")
 
         # View 4: Attack Simulator Lab & Agent Diagnostics
         view_lab = self._build_lab_view()
-        self.view_stack.add_titled_with_icon(view_lab, "lab", "Simulator Lab", "system-run-symbolic")
+        self.view_stack.add_titled(view_lab, "lab", "Simulator Lab")
 
-        main_box.append(self.view_stack)
+        self.workspace_paned.set_end_child(self.view_stack)
+        main_box.append(self.workspace_paned)
+
+    def _build_workstation_sidebar(self):
+        """Constructs the native vibrant translucent sidebar following macOS Sequoia HIG."""
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_vexpand(True)
+        scrolled.set_hexpand(False)
+        scrolled.set_size_request(300, -1)
+        scrolled.add_css_class("grit-sidebar-container")
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        vbox.set_margin_top(12)
+        vbox.set_margin_bottom(16)
+        scrolled.set_child(vbox)
+
+        # Section 1: Navigation Console
+        h_nav = Gtk.Label(label="WORKSTATION CONSOLE")
+        h_nav.add_css_class("sidebar-section-header")
+        h_nav.set_xalign(0.0)
+        vbox.append(h_nav)
+
+        self.nav_list = Gtk.ListBox()
+        self.nav_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.nav_list.add_css_class("navigation-sidebar")
+        self.nav_list.connect("row-selected", self._on_sidebar_nav_selected)
+
+        self.nav_rows = {}
+        nav_items = [
+            ("mentor", "Mentor Stream", "dialog-information-symbolic", None),
+            ("triage", "Log Triage", "security-medium-symbolic", "triage_badge"),
+            ("matrix", "Defense Matrix", "emblem-favorite-symbolic", "matrix_badge"),
+            ("lab", "Simulator Lab", "system-run-symbolic", None),
+        ]
+
+        for tag, title, icon_name, badge_attr in nav_items:
+            row = Gtk.ListBoxRow()
+            row.add_css_class("sidebar-nav-row")
+            row.view_tag = tag
+
+            r_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            icon = Gtk.Image.new_from_icon_name(icon_name)
+            icon.set_pixel_size(16)
+            r_box.append(icon)
+
+            lbl = Gtk.Label(label=title)
+            lbl.add_css_class("sidebar-nav-label")
+            lbl.set_xalign(0.0)
+            lbl.set_hexpand(True)
+            r_box.append(lbl)
+
+            if badge_attr:
+                badge = Gtk.Label(label="0" if "triage" in badge_attr else "Lv 1")
+                badge.add_css_class("sidebar-nav-badge")
+                setattr(self, badge_attr, badge)
+                r_box.append(badge)
+
+            row.set_child(r_box)
+            self.nav_list.append(row)
+            self.nav_rows[tag] = row
+
+        vbox.append(self.nav_list)
+        # Select 'mentor' row by default
+        self.nav_list.select_row(self.nav_rows["mentor"])
+
+        # Section 2: System Log Monitor
+        h_mon = Gtk.Label(label="SYSTEM LOG MONITOR")
+        h_mon.add_css_class("sidebar-section-header")
+        h_mon.set_xalign(0.0)
+        vbox.append(h_mon)
+
+        mon_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        mon_card.add_css_class("sidebar-info-card")
+
+        row_file = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        f_icon = Gtk.Image.new_from_icon_name("text-x-generic-symbolic")
+        row_file.append(f_icon)
+        self.side_log_lbl = Gtk.Label(label=self.target_log_file)
+        self.side_log_lbl.set_xalign(0.0)
+        self.side_log_lbl.set_hexpand(True)
+        self.side_log_lbl.set_ellipsize(Pango.EllipsizeMode.MIDDLE)
+        self.side_log_lbl.add_css_class("mentor-header-tag")
+        row_file.append(self.side_log_lbl)
+
+        btn_ch_file = Gtk.Button.new_from_icon_name("document-open-symbolic")
+        btn_ch_file.add_css_class("flat")
+        btn_ch_file.set_tooltip_text("Switch Monitored Log File")
+        btn_ch_file.connect("clicked", lambda b: self._prompt_change_log_file())
+        row_file.append(btn_ch_file)
+        mon_card.append(row_file)
+
+        row_lat = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        l_icon = Gtk.Image.new_from_icon_name("utilities-system-monitor-symbolic")
+        row_lat.append(l_icon)
+        l_lbl = Gtk.Label(label="Eventfd Interrupt:")
+        l_lbl.set_xalign(0.0)
+        l_lbl.set_hexpand(True)
+        l_lbl.add_css_class("mentor-header-tag")
+        row_lat.append(l_lbl)
+        self.side_latency_badge = Gtk.Label(label="~510 µs")
+        self.side_latency_badge.add_css_class("grit-latency-badge")
+        row_lat.append(self.side_latency_badge)
+        mon_card.append(row_lat)
+
+        vbox.append(mon_card)
+
+        # Section 3: Autonomous Diagnostic Runners
+        h_diag = Gtk.Label(label="DIAGNOSTIC RUNNERS")
+        h_diag.add_css_class("sidebar-section-header")
+        h_diag.set_xalign(0.0)
+        vbox.append(h_diag)
+
+        diag_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        diag_card.add_css_class("sidebar-info-card")
+
+        tools_def = [
+            ("Audit Listening Sockets", "ss -tulpn", "ports"),
+            ("Tail Monitored Logs", "tail auth.log", "logs"),
+            ("Audit Host Firewall", "ufw status", "firewall"),
+            ("Active User Terminals", "who", "who"),
+        ]
+
+        for title, sub, key in tools_def:
+            row_t = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            t_lbl = Gtk.Label(label=title)
+            t_lbl.set_xalign(0.0)
+            t_lbl.set_hexpand(True)
+            t_lbl.add_css_class("mentor-header-tag")
+            row_t.append(t_lbl)
+
+            btn_run = Gtk.Button(label="Run")
+            btn_run.add_css_class("sidebar-action-pill-btn")
+            btn_run.connect("clicked", lambda b, k=key: (
+                self._switch_to_view("mentor"),
+                self._execute_agent_tool(k)
+            ))
+            row_t.append(btn_run)
+            diag_card.append(row_t)
+
+        vbox.append(diag_card)
+
+        # Section 4: Attack Simulators
+        h_sim = Gtk.Label(label="ATTACK SIMULATORS")
+        h_sim.add_css_class("sidebar-section-header")
+        h_sim.set_xalign(0.0)
+        vbox.append(h_sim)
+
+        sim_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        sim_card.add_css_class("sidebar-info-card")
+
+        sim_defs = [
+            ("SSH Brute Force", SCENARIO_SSH_BRUTE),
+            ("Sudo Privilege Abuse", SCENARIO_SUDO_ESCALATION),
+            ("Credential Leak Redact", SCENARIO_REDACTION),
+        ]
+
+        for s_title, s_id in sim_defs:
+            row_s = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            s_lbl = Gtk.Label(label=s_title)
+            s_lbl.set_xalign(0.0)
+            s_lbl.set_hexpand(True)
+            s_lbl.add_css_class("mentor-header-tag")
+            row_s.append(s_lbl)
+
+            btn_inj = Gtk.Button(label="Inject")
+            btn_inj.add_css_class("sidebar-action-pill-btn")
+            btn_inj.connect("clicked", lambda b, sid=s_id: (
+                self._switch_to_view("mentor"),
+                self._inject_scenario(sid)
+            ))
+            row_s.append(btn_inj)
+            sim_card.append(row_s)
+
+        vbox.append(sim_card)
+
+        # Section 5: Defense Competencies Summary
+        h_skill = Gtk.Label(label="DEFENSE COMPETENCIES")
+        h_skill.add_css_class("sidebar-section-header")
+        h_skill.set_xalign(0.0)
+        vbox.append(h_skill)
+
+        skill_summary_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        skill_summary_card.add_css_class("sidebar-info-card")
+
+        top_s = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        self.side_rank_lbl = Gtk.Label(label="🛡️ Cadet Sentinel")
+        self.side_rank_lbl.add_css_class("mentor-header-tag")
+        self.side_rank_lbl.set_xalign(0.0)
+        self.side_rank_lbl.set_hexpand(True)
+        top_s.append(self.side_rank_lbl)
+
+        self.side_xp_lbl = Gtk.Label(label="0 XP")
+        self.side_xp_lbl.add_css_class("badge-safe")
+        top_s.append(self.side_xp_lbl)
+        skill_summary_card.append(top_s)
+
+        self.side_progress = Gtk.ProgressBar()
+        self.side_progress.set_fraction(0.1)
+        self.side_progress.add_css_class("slender-progress")
+        skill_summary_card.append(self.side_progress)
+
+        vbox.append(skill_summary_card)
+
+        # Backward compatibility action rows
+        self.row_watcher_file = Adw.ActionRow()
+        self.row_watcher_file.set_subtitle(self.target_log_file)
+        self.row_model = Adw.ActionRow()
+
+        return scrolled
+
+    def _on_sidebar_nav_selected(self, listbox, row):
+        if row and hasattr(row, "view_tag"):
+            self.view_stack.set_visible_child_name(row.view_tag)
+            if hasattr(self, "header_title_lbl"):
+                titles = {
+                    "mentor": "Mentor Stream",
+                    "triage": "Log Triage",
+                    "matrix": "Defense Matrix",
+                    "lab": "Simulator Lab"
+                }
+                self.header_title_lbl.set_label(titles.get(row.view_tag, "Grit"))
+
+    def _switch_to_view(self, view_tag):
+        if hasattr(self, "nav_rows") and view_tag in self.nav_rows:
+            self.nav_list.select_row(self.nav_rows[view_tag])
+        elif hasattr(self, "view_stack"):
+            self.view_stack.set_visible_child_name(view_tag)
+
+    def _build_mentor_view(self):
+        """Builds mentor chat view panel."""
+        return self._build_chat_panel()
 
     # --------------------------------------------------------------------------
     # Menu Button
@@ -728,134 +1023,7 @@ class GritModernWindow(Adw.ApplicationWindow):
         menu_btn.set_tooltip_text("Workstation Settings & Tools")
         return menu_btn
 
-    # --------------------------------------------------------------------------
-    # View 1: Socratic Mentor (Dual-Pane Workstation)
-    # --------------------------------------------------------------------------
-    def _build_mentor_view(self):
-        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
-        paned.set_position(360)
-        paned.set_shrink_start_child(False)
-        paned.set_shrink_end_child(False)
 
-        # Left Quick Sidebar
-        sidebar = self._build_mentor_sidebar()
-        paned.set_start_child(sidebar)
-
-        # Right Chat Panel
-        chat_panel = self._build_chat_panel()
-        paned.set_end_child(chat_panel)
-
-        return paned
-
-    def _build_mentor_sidebar(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_vexpand(True)
-        scrolled.set_hexpand(False)
-        scrolled.set_size_request(340, -1)
-
-        pref_page = Adw.PreferencesPage()
-        scrolled.set_child(pref_page)
-
-        # Group 1: Live Monitor Status
-        group_monitor = Adw.PreferencesGroup()
-        group_monitor.set_title("System Log Watcher")
-        group_monitor.set_description("POSIX inotify thread with sub-ms interrupt")
-
-        self.row_watcher_file = Adw.ActionRow()
-        self.row_watcher_file.set_title("Auth Log Target")
-        self.row_watcher_file.set_subtitle(self.target_log_file)
-
-        btn_pick_file = Gtk.Button.new_from_icon_name("document-open-symbolic")
-        btn_pick_file.add_css_class("flat")
-        btn_pick_file.set_tooltip_text("Change monitored file path")
-        btn_pick_file.connect("clicked", lambda b: self._prompt_change_log_file())
-        self.row_watcher_file.add_suffix(btn_pick_file)
-        group_monitor.add(self.row_watcher_file)
-
-        self.row_side_latency = Adw.ActionRow()
-        self.row_side_latency.set_title("Eventfd Latency")
-        self.row_side_latency.set_subtitle("Thread halt benchmark")
-        self.side_latency_badge = Gtk.Label(label="~510 µs")
-        self.side_latency_badge.add_css_class("grit-latency-badge")
-        self.row_side_latency.add_suffix(self.side_latency_badge)
-        group_monitor.add(self.row_side_latency)
-
-        pref_page.add(group_monitor)
-
-        # Group 2: Intelligence Engine
-        group_llm = Adw.PreferencesGroup()
-        group_llm.set_title("Intelligence Engine")
-        group_llm.set_description("Local Ollama endpoint / offline Socratic fallback")
-
-        self.row_model = Adw.ActionRow()
-        self.row_model.set_title("LLM Model")
-        self.row_model.set_subtitle("http://127.0.0.1:11434")
-
-        self.model_combo = Gtk.DropDown.new_from_strings(self.available_models)
-        self.model_combo.connect("notify::selected", self._on_model_changed)
-        self.row_model.add_suffix(self.model_combo)
-        group_llm.add(self.row_model)
-
-        pref_page.add(group_llm)
-
-        # Group 3: Quick Attack Injectors
-        group_quick_sim = Adw.PreferencesGroup()
-        group_quick_sim.set_title("Simulate Attack Scenarios")
-        group_quick_sim.set_description("Triggers real inotify capture & Socratic mentor triage")
-
-        row_ssh = Adw.ActionRow()
-        row_ssh.set_title("SSH Brute Force")
-        row_ssh.set_subtitle("Inject 6 failed probes from 203.0.113.42")
-        btn_ssh = Gtk.Button(label="Inject")
-        btn_ssh.add_css_class("flat")
-        btn_ssh.connect("clicked", lambda b: self._inject_scenario(SCENARIO_SSH_BRUTE))
-        row_ssh.add_suffix(btn_ssh)
-        group_quick_sim.add(row_ssh)
-
-        row_sudo = Adw.ActionRow()
-        row_sudo.set_title("Sudo Privilege Escalation")
-        row_sudo.set_subtitle("Inject unauthorized sudo attempts")
-        btn_sudo = Gtk.Button(label="Inject")
-        btn_sudo.add_css_class("flat")
-        btn_sudo.connect("clicked", lambda b: self._inject_scenario(SCENARIO_SUDO_ESCALATION))
-        row_sudo.add_suffix(btn_sudo)
-        group_quick_sim.add(row_sudo)
-
-        row_leak = Adw.ActionRow()
-        row_leak.set_title("Credential Leak Test")
-        row_leak.set_subtitle("Inject PEM keys, passwords, and JWTs")
-        btn_leak = Gtk.Button(label="Inject")
-        btn_leak.add_css_class("flat")
-        btn_leak.connect("clicked", lambda b: self._inject_scenario(SCENARIO_REDACTION))
-        row_leak.add_suffix(btn_leak)
-        group_quick_sim.add(row_leak)
-
-        pref_page.add(group_quick_sim)
-
-        # Group 4: Autonomous Diagnostic Tools
-        group_tools = Adw.PreferencesGroup()
-        group_tools.set_title("Autonomous Agent Tools")
-        group_tools.set_description("Read-only system inspections executed safely")
-
-        tools_def = [
-            ("Audit Listening Sockets", "Inspect open ports (`ss -tulpn`)", "ports"),
-            ("Tail Monitored Logs", "Inspect recent 15 lines of auth.log", "logs"),
-            ("Audit Host Firewall", "Inspect UFW & iptables policy", "firewall"),
-            ("Active User Terminals", "Inspect logged-in sessions (`who`)", "who"),
-        ]
-
-        for title, sub, key in tools_def:
-            row = Adw.ActionRow()
-            row.set_title(title)
-            row.set_subtitle(sub)
-            btn = Gtk.Button(label="Run")
-            btn.add_css_class("flat")
-            btn.connect("clicked", lambda b, k=key: self._execute_agent_tool(k))
-            row.add_suffix(btn)
-            group_tools.add(row)
-
-        pref_page.add(group_tools)
-        return scrolled
 
     def _build_chat_panel(self):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -921,15 +1089,19 @@ class GritModernWindow(Adw.ApplicationWindow):
 
         vbox.append(chips_scrolled)
 
-        # Capsule Input Bar
+        # Floating Capsule Input Bar (Apple macOS Sequoia Floating Capsule)
         input_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        input_container.set_margin_start(16)
-        input_container.set_margin_end(16)
-        input_container.set_margin_bottom(14)
+        input_container.add_css_class("floating-input-container")
 
-        capsule = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        capsule = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         capsule.add_css_class("chat-entry-capsule")
         capsule.set_hexpand(True)
+
+        # Native Dictation Icon
+        mic_icon = Gtk.Image.new_from_icon_name("audio-input-microphone-symbolic")
+        mic_icon.add_css_class("dictation-icon-btn")
+        mic_icon.set_tooltip_text("Voice Dictation (macOS HIG)")
+        capsule.append(mic_icon)
 
         self.chat_entry = Gtk.Entry()
         self.chat_entry.set_has_frame(False)
@@ -1104,6 +1276,8 @@ class GritModernWindow(Adw.ApplicationWindow):
         crit = sum(1 for inc in self.incident_history if inc.get("severity") == SEV_CRIT)
         self.kpi_total_lbl.set_label(str(total))
         self.kpi_crit_lbl.set_label(str(crit))
+        if hasattr(self, "triage_badge"):
+            self.triage_badge.set_label(str(total))
 
     # --------------------------------------------------------------------------
     # View 3: Defense Matrix & Gamified Skill Tree
@@ -1726,6 +1900,8 @@ class GritModernWindow(Adw.ApplicationWindow):
                     self.c_engine.watcher_destroy(ctypes.byref(self.watcher_ctx))
                     self.c_engine.watcher_init(ctypes.byref(self.watcher_ctx), self.target_log_file.encode("utf-8"))
                     self.row_watcher_file.set_subtitle(self.target_log_file)
+                    if hasattr(self, "side_log_lbl"):
+                        self.side_log_lbl.set_label(self.target_log_file)
                     if was_running:
                         self.c_engine.watcher_start(ctypes.byref(self.watcher_ctx))
                     self.toast_overlay.add_toast(Adw.Toast.new(f"Log target switched: {new_path}"))
@@ -1821,6 +1997,17 @@ class GritModernWindow(Adw.ApplicationWindow):
                 self.analyst_rank_lbl.set_label(rank)
                 self.xp_summary_lbl.set_label(f"Total Defensive XP: {total_xp} • Next Rank in {max(0, 500 - (total_xp % 500))} XP")
                 self.total_progress.set_fraction(min(1.0, total_xp / 1000.0))
+
+                # Keep Translucent Sidebar Defense Summary updated
+                if hasattr(self, "side_rank_lbl"):
+                    self.side_rank_lbl.set_label(rank)
+                if hasattr(self, "side_xp_lbl"):
+                    self.side_xp_lbl.set_label(f"{total_xp} XP")
+                if hasattr(self, "side_progress"):
+                    self.side_progress.set_fraction(min(1.0, total_xp / 1000.0))
+                if hasattr(self, "matrix_badge") and count.value > 0:
+                    max_lvl = max([skills_ptr[k].level for k in range(count.value)], default=1)
+                    self.matrix_badge.set_label(f"Lv {max_lvl}")
 
     def _on_close_request(self, window):
         if self.watcher_ctx.is_running:

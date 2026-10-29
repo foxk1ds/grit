@@ -1,508 +1,659 @@
 /* ==========================================================================
-   Grit Modern Defensive Workstation Design System (Libadwaita / GNOME HIG)
+   Grit — Apple macOS Sequoia Human Interface Guidelines (HIG) Design System
+   Engineered for Linux (GTK4 / Libadwaita / CSS)
    ========================================================================== */
 
-/* Base Window & Surface Palette */
+/* --------------------------------------------------------------------------
+   1. Typography & Global Surface Palette
+   -------------------------------------------------------------------------- */
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Inter", "Helvetica Neue", "Cantarell", sans-serif;
+    -gtk-secondary-caret-color: #007aff;
+}
+
 window {
-    background-color: #12151c;
+    background-color: #161820; /* Solid dark elevated background (macOS Sequoia Dark Mode) */
     color: #e4e7eb;
 }
 
-/* HeaderBar Brand & Badges */
+/* --------------------------------------------------------------------------
+   2. Unified Transparent Title Bar / Window Chrome (.hiddenTitleBar aesthetic)
+   -------------------------------------------------------------------------- */
+
+headerbar {
+    background-color: rgba(22, 24, 32, 0.75);
+    background-image: none;
+    backdrop-filter: blur(30px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+    min-height: 44px;
+    padding: 0 12px;
+}
+
+headerbar:backdrop {
+    background-color: rgba(22, 24, 32, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
 .grit-brand-box {
-    margin-right: 12px;
+    margin-right: 14px;
 }
 
 .grit-brand-title {
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.2px;
     color: #ffffff;
 }
 
 .grit-brand-subtitle {
-    font-size: 11px;
-    color: #78aeed;
-    font-weight: 600;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 500;
+    letter-spacing: 0.2px;
 }
 
+/* Latency Badge (Translucent Glass Pill) */
 .grit-latency-badge {
-    background-color: alpha(#3584e4, 0.16);
-    color: #78aeed;
-    border: 1px solid alpha(#3584e4, 0.38);
+    background-color: rgba(53, 132, 228, 0.12);
+    color: #64b5f6;
+    border: 1px solid rgba(53, 132, 228, 0.25);
     border-radius: 9999px;
     padding: 3px 10px;
     font-size: 11px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-weight: 600;
+    font-family: -apple-system-monospaced, 'SF Mono', 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
 }
 
+/* Status Indicators */
 .grit-pulse-active {
-    color: #33d17a;
+    color: #30d158;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .grit-pulse-inactive {
-    color: #77767b;
+    color: rgba(255, 255, 255, 0.4);
     font-size: 12px;
 }
 
 .grit-pill-online {
-    background-color: alpha(#26a269, 0.22);
-    color: #33d17a;
-    border: 1px solid alpha(#26a269, 0.45);
+    background-color: rgba(48, 209, 88, 0.14);
+    color: #30d158;
+    border: 1px solid rgba(48, 209, 88, 0.3);
     border-radius: 9999px;
     padding: 3px 10px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .grit-pill-offline {
-    background-color: alpha(#e5a50a, 0.22);
-    color: #f6d32d;
-    border: 1px solid alpha(#e5a50a, 0.45);
+    background-color: rgba(255, 214, 10, 0.14);
+    color: #ffd60a;
+    border: 1px solid rgba(255, 214, 10, 0.3);
     border-radius: 9999px;
     padding: 3px 10px;
     font-size: 11px;
-    font-weight: 700;
-}
-
-/* View Switcher Styling */
-viewswitcher button {
-    border-radius: 8px;
-    margin: 2px 3px;
     font-weight: 600;
-    font-size: 13px;
-    transition: all 180ms ease-in-out;
 }
 
-viewswitcher button:checked {
-    background-color: alpha(#3584e4, 0.25);
+/* --------------------------------------------------------------------------
+   3. Translucent Sidebar (NavigationSplitView / NSVisualEffectView Material)
+   -------------------------------------------------------------------------- */
+
+.grit-sidebar-container {
+    background-color: rgba(20, 23, 31, 0.72);
+    backdrop-filter: blur(40px);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    min-width: 290px;
+    max-width: 340px;
+}
+
+/* Sidebar Section Headers: Capitalized, Secondary, Tightly Kerned */
+.sidebar-section-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.42);
+    letter-spacing: 0.6px;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+/* Navigation List Item: Edge-to-Edge Rounded Selection Highlight */
+.sidebar-nav-row {
+    border-radius: 8px;
+    margin: 2px 10px;
+    padding: 7px 12px;
+    color: #d1d5dc;
+    transition: all 140ms ease-in-out;
+}
+
+.sidebar-nav-row:hover {
+    background-color: rgba(255, 255, 255, 0.06);
     color: #ffffff;
-    box-shadow: inset 0 -2px 0 #3584e4;
 }
 
-/* Chat Stream Layout */
+.sidebar-nav-row:selected,
+.sidebar-nav-row.active {
+    background-color: rgba(0, 122, 255, 0.22);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-nav-label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.sidebar-nav-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 2px 7px;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-family: -apple-system-monospaced, 'SF Mono', monospace;
+}
+
+/* Sidebar Info Cards */
+.sidebar-info-card {
+    background-color: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 4px 10px;
+}
+
+.sidebar-action-pill-btn {
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    background-color: rgba(0, 122, 255, 0.15);
+    color: #64b5f6;
+    border: 1px solid rgba(0, 122, 255, 0.25);
+    transition: all 140ms ease;
+}
+
+.sidebar-action-pill-btn:hover {
+    background-color: rgba(0, 122, 255, 0.28);
+    color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   4. Main Content Area & Chat Stream
+   -------------------------------------------------------------------------- */
+
 .chat-container {
-    background-color: #101218;
+    background-color: #161820; /* Solid dark elevated background */
 }
 
-/* Hero Welcome Card */
+/* Welcome Hero Card */
 .hero-card {
-    background: linear-gradient(135deg, #182030 0%, #131722 100%);
-    border: 1px solid alpha(#3584e4, 0.3);
+    background: linear-gradient(145deg, rgba(30, 38, 54, 0.6) 0%, rgba(20, 24, 34, 0.8) 100%);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 16px;
-    padding: 24px;
-    margin: 12px 18px 20px 18px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    padding: 22px 24px;
+    margin: 12px 24px 18px 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .hero-title {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 17px;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 0.3px;
+    letter-spacing: -0.2px;
 }
 
 .hero-subtitle {
     font-size: 13px;
-    color: #a4b3c6;
+    color: rgba(255, 255, 255, 0.6);
     line-height: 1.5;
 }
 
 .hero-pill {
-    background-color: alpha(#2ec27e, 0.15);
-    color: #57e389;
-    border: 1px solid alpha(#2ec27e, 0.35);
+    background-color: rgba(48, 209, 88, 0.12);
+    color: #30d158;
+    border: 1px solid rgba(48, 209, 88, 0.25);
     border-radius: 9999px;
     padding: 3px 10px;
     font-size: 11px;
     font-weight: 600;
 }
 
-/* User Message Bubble */
+/* --------------------------------------------------------------------------
+   5. User Chat Bubbles (Apple iMessage Style)
+   -------------------------------------------------------------------------- */
+
 .user-bubble-box {
-    margin-left: 90px;
-    margin-right: 14px;
+    margin-left: 120px;
+    margin-right: 24px;
     margin-top: 6px;
     margin-bottom: 6px;
 }
 
 .user-bubble {
-    background: linear-gradient(135deg, #1c4a75 0%, #153859 100%);
+    background: linear-gradient(145deg, #007aff 0%, #0a84ff 100%);
     color: #ffffff;
-    border: 1px solid alpha(#3584e4, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* Dynamic corner radii: Sharper on the bottom right (Apple iMessage HIG) */
     border-radius: 18px 18px 4px 18px;
-    padding: 12px 18px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.28);
+    padding: 10px 16px;
+    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.28);
 }
 
 .user-bubble-text {
-    color: #f6f8fa;
-    font-size: 13.5px;
-    line-height: 1.5;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.45;
 }
 
-/* Mentor Message Bubble */
-.mentor-bubble-box {
-    margin-right: 80px;
-    margin-left: 14px;
-    margin-top: 6px;
-    margin-bottom: 6px;
+/* --------------------------------------------------------------------------
+   6. Mentor Chat Stream (NO BOUNDED BOXES - Flows Directly on Window)
+   -------------------------------------------------------------------------- */
+
+.mentor-flow-row {
+    margin-right: 60px;
+    margin-left: 24px;
+    margin-top: 10px;
+    margin-bottom: 12px;
 }
 
-.mentor-bubble {
-    background-color: #1a1e28;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 4px 18px 18px 18px;
-    padding: 18px 22px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.26);
+.mentor-avatar-glow-box {
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #007aff 0%, #00c7be 100%);
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(0, 199, 190, 0.4), 0 2px 6px rgba(0, 122, 255, 0.3);
+    margin-top: 2px;
+}
+
+.mentor-flow-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 .mentor-header-title {
     font-weight: 700;
     font-size: 13.5px;
-    color: #78aeed;
-    letter-spacing: 0.3px;
+    color: #ffffff;
+    letter-spacing: -0.1px;
 }
 
 .mentor-header-tag {
-    font-size: 11px;
-    color: #8c8c9a;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.45);
+    font-family: -apple-system-monospaced, 'SF Mono', monospace;
 }
 
 .mentor-body-text {
-    font-size: 13.5px;
+    font-size: 14px;
     line-height: 1.6;
-    color: #e0e3eb;
+    color: #e4e7ec;
 }
 
-/* Socratic Callout Box */
+/* Socratic Diagnostic Question: Frosted Glass Callout */
 .socratic-callout {
-    background-color: alpha(#2aa198, 0.1);
-    border-left: 4px solid #2aa198;
+    background-color: rgba(0, 199, 190, 0.08);
+    border-left: 3px solid #00c7be;
     border-radius: 4px 10px 10px 4px;
-    padding: 14px 18px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .socratic-callout-title {
-    font-weight: 800;
-    font-size: 11.5px;
-    color: #33d17a;
+    font-weight: 700;
+    font-size: 11px;
+    color: #00c7be;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.6px;
 }
 
-/* Terminal Command Snippet Card */
+/* --------------------------------------------------------------------------
+   7. Terminal Command Cards (.ultraThinMaterial & Hover Copy Button)
+   -------------------------------------------------------------------------- */
+
 .command-card {
-    background-color: #0d0f14;
-    border: 1px solid rgba(255, 255, 255, 0.13);
+    background-color: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-    margin-top: 10px;
+    margin-top: 8px;
     margin-bottom: 6px;
     overflow: hidden;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .command-card-header {
-    background-color: #161922;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding: 6px 12px;
 }
 
-.command-card-dots {
-    color: #555761;
-    font-size: 10px;
-    margin-right: 4px;
+.terminal-traffic-dots {
+    margin-right: 6px;
+}
+
+.dot-red {
+    color: rgba(255, 69, 58, 0.85);
+    font-size: 9px;
+}
+
+.dot-yellow {
+    color: rgba(255, 214, 10, 0.85);
+    font-size: 9px;
+}
+
+.dot-green {
+    color: rgba(48, 209, 88, 0.85);
+    font-size: 9px;
 }
 
 .command-card-body {
     padding: 10px 16px;
-    background-color: #0b0d12;
+    background-color: rgba(0, 0, 0, 0.18);
 }
 
 .command-card-code {
-    font-family: 'JetBrains Mono', 'Fira Code', 'DejaVu Sans Mono', monospace;
-    font-size: 13px;
-    color: #57e389;
-    letter-spacing: 0.3px;
-    line-height: 1.4;
+    font-family: -apple-system-monospaced, 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+    font-size: 12.5px;
+    color: #30d158;
+    line-height: 1.45;
 }
 
-/* Safety Badges */
-.badge-safe {
-    background-color: alpha(#26a269, 0.25);
-    color: #57e389;
-    border: 1px solid alpha(#26a269, 0.55);
-    font-size: 10.5px;
-    font-weight: 800;
-    border-radius: 5px;
-    padding: 2px 8px;
-    letter-spacing: 0.5px;
-}
-
-.badge-caution {
-    background-color: alpha(#e5a50a, 0.25);
-    color: #f8e45c;
-    border: 1px solid alpha(#e5a50a, 0.55);
-    font-size: 10.5px;
-    font-weight: 800;
-    border-radius: 5px;
-    padding: 2px 8px;
-    letter-spacing: 0.5px;
-}
-
-.badge-blocked {
-    background-color: alpha(#c01c28, 0.25);
-    color: #ff7b63;
-    border: 1px solid alpha(#c01c28, 0.55);
-    font-size: 10.5px;
-    font-weight: 800;
-    border-radius: 5px;
-    padding: 2px 8px;
-    letter-spacing: 0.5px;
-}
-
-/* Incident Alert Card */
-.alert-card {
-    background: linear-gradient(135deg, alpha(#c01c28, 0.12) 0%, alpha(#1c161a, 0.8) 100%);
-    border: 1px solid alpha(#c01c28, 0.35);
-    border-left: 5px solid #e01b24;
-    border-radius: 6px 14px 14px 6px;
-    padding: 16px 20px;
-    margin-right: 80px;
-    margin-left: 14px;
-    box-shadow: 0 4px 12px rgba(192, 28, 40, 0.15);
-}
-
-/* Tool Execution Result Card */
-.tool-result-card {
-    background-color: #141822;
-    border: 1px solid alpha(#3584e4, 0.35);
-    border-left: 5px solid #3584e4;
-    border-radius: 6px 14px 14px 6px;
-    padding: 14px 18px;
-    margin-right: 80px;
-    margin-left: 14px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-}
-
-/* Suggestion Chips */
-.chip-button {
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 14px;
-    background-color: alpha(#1f2430, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.11);
-    color: #d1d5db;
+/* Native macOS Copy Button Appearing on Hover */
+.command-copy-btn {
+    opacity: 0.3;
+    border-radius: 6px;
+    padding: 4px 8px;
     transition: all 160ms ease-in-out;
 }
 
+.command-card:hover .command-copy-btn {
+    opacity: 1.0;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Command Guard Badges */
+.badge-safe {
+    background-color: rgba(48, 209, 88, 0.15);
+    color: #30d158;
+    border: 1px solid rgba(48, 209, 88, 0.35);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    letter-spacing: 0.4px;
+}
+
+.badge-caution {
+    background-color: rgba(255, 214, 10, 0.15);
+    color: #ffd60a;
+    border: 1px solid rgba(255, 214, 10, 0.35);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    letter-spacing: 0.4px;
+}
+
+.badge-blocked {
+    background-color: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+    border: 1px solid rgba(255, 69, 58, 0.35);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    letter-spacing: 0.4px;
+}
+
+/* Incident Notification Card */
+.alert-card {
+    background: linear-gradient(145deg, rgba(255, 69, 58, 0.08) 0%, rgba(26, 20, 24, 0.6) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 69, 58, 0.25);
+    border-left: 3px solid #ff453a;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-right: 60px;
+    margin-left: 24px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Diagnostic Tool Card */
+.tool-result-card {
+    background-color: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid #007aff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-right: 60px;
+    margin-left: 24px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   8. Suggestion Chips & Carousel
+   -------------------------------------------------------------------------- */
+
+.chip-button {
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #e4e7ec;
+    transition: all 150ms ease-in-out;
+}
+
 .chip-button:hover {
-    background-color: alpha(#3584e4, 0.22);
-    border-color: #3584e4;
+    background-color: rgba(0, 122, 255, 0.2);
+    border-color: rgba(0, 122, 255, 0.4);
     color: #ffffff;
 }
 
-/* Input Bar Styling */
+/* --------------------------------------------------------------------------
+   9. Floating Pill Input Field (macOS Sequoia Floating Capsule)
+   -------------------------------------------------------------------------- */
+
+.floating-input-container {
+    margin-left: 28px;
+    margin-right: 28px;
+    margin-bottom: 20px;
+    margin-top: 6px;
+}
+
 .chat-entry-capsule {
-    border-radius: 28px;
-    padding: 6px 16px;
-    background-color: #1a1e28;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 9999px;
+    padding: 6px 12px 6px 16px;
+    background-color: rgba(30, 34, 48, 0.85);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     transition: all 180ms ease;
 }
 
 .chat-entry-capsule:focus-within {
-    border-color: #3584e4;
-    box-shadow: 0 0 0 2px alpha(#3584e4, 0.3);
+    border-color: #007aff;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 0 2px rgba(0, 122, 255, 0.35);
+}
+
+.dictation-icon-btn {
+    opacity: 0.5;
+    transition: opacity 150ms ease;
+}
+
+.dictation-icon-btn:hover {
+    opacity: 0.9;
 }
 
 .send-button-circular {
     border-radius: 9999px;
-    min-width: 38px;
-    min-height: 38px;
+    min-width: 32px;
+    min-height: 32px;
     padding: 0;
+    background: linear-gradient(135deg, #007aff 0%, #0a84ff 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.35);
 }
 
-/* ==========================================================================
-   Dedicated Views: Triage, Defense Matrix, Lab & Tools
-   ========================================================================== */
+.send-button-circular:hover {
+    background: linear-gradient(135deg, #0a84ff 0%, #007aff 100%);
+    box-shadow: 0 3px 12px rgba(0, 122, 255, 0.5);
+}
 
-/* KPI Stat Cards (Triage & Overview) */
+/* --------------------------------------------------------------------------
+   10. Native Control Center Style Pill Toasts
+   -------------------------------------------------------------------------- */
+
+toast {
+    border-radius: 9999px;
+    background-color: rgba(30, 34, 48, 0.92);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    padding: 6px 18px;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   11. KPI Cards, Defense Matrix & Lab
+   -------------------------------------------------------------------------- */
+
 .kpi-card {
-    background-color: #171b24;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 12px;
     padding: 16px 20px;
     margin: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .kpi-card-cyan {
-    border-top: 3px solid #3584e4;
+    border-top: 2px solid #007aff;
 }
 
 .kpi-card-red {
-    border-top: 3px solid #e01b24;
+    border-top: 2px solid #ff453a;
 }
 
 .kpi-card-green {
-    border-top: 3px solid #2ec27e;
+    border-top: 2px solid #30d158;
 }
 
 .kpi-card-amber {
-    border-top: 3px solid #f6d32d;
+    border-top: 2px solid #ffd60a;
 }
 
 .kpi-value {
     font-size: 26px;
-    font-weight: 800;
+    font-weight: 700;
     color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: -apple-system-monospaced, 'SF Mono', monospace;
+    letter-spacing: -0.5px;
 }
 
 .kpi-label {
-    font-size: 11.5px;
-    color: #8c93a0;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.45);
     text-transform: uppercase;
     letter-spacing: 0.6px;
     font-weight: 600;
 }
 
-/* Analyst Profile Banner */
 .analyst-profile-card {
-    background: linear-gradient(135deg, #1b2333 0%, #141a27 100%);
-    border: 1px solid alpha(#3584e4, 0.32);
+    background: linear-gradient(145deg, rgba(30, 42, 65, 0.6) 0%, rgba(20, 26, 38, 0.8) 100%);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 122, 255, 0.25);
     border-radius: 16px;
-    padding: 24px;
-    margin: 16px 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    padding: 22px 24px;
+    margin: 16px 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .analyst-rank-title {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 700;
     color: #ffffff;
-    letter-spacing: 0.4px;
+    letter-spacing: -0.2px;
 }
 
 .analyst-rank-badge {
-    background: linear-gradient(135deg, #26a269 0%, #1b7348 100%);
-    color: #ffffff;
+    background-color: rgba(48, 209, 88, 0.18);
+    color: #30d158;
+    border: 1px solid rgba(48, 209, 88, 0.35);
     border-radius: 9999px;
-    padding: 4px 14px;
-    font-size: 11.5px;
+    padding: 3px 12px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
 }
 
-/* Defense Skill Cards */
 .skill-card {
-    background-color: #181c26;
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    background-color: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 12px;
-    padding: 18px 20px;
+    padding: 16px 18px;
     margin: 6px 0;
-    transition: all 180ms ease;
+    transition: all 160ms ease;
 }
 
 .skill-card:hover {
-    border-color: alpha(#3584e4, 0.4);
-    background-color: #1c212e;
+    border-color: rgba(0, 122, 255, 0.35);
+    background-color: rgba(255, 255, 255, 0.055);
 }
 
-.skill-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.skill-level-pill {
-    background-color: alpha(#3584e4, 0.18);
-    color: #78aeed;
-    border: 1px solid alpha(#3584e4, 0.35);
-    border-radius: 9999px;
-    padding: 2px 9px;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-/* Achievement Trophies */
-.achievement-card {
-    background-color: #161922;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin: 4px;
-}
-
-.achievement-card-unlocked {
-    border-color: alpha(#2ec27e, 0.35);
-    background: linear-gradient(135deg, alpha(#2ec27e, 0.08) 0%, #161922 100%);
-}
-
-/* Attack Simulator Cards */
 .sim-card {
-    background-color: #171b24;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 14px;
-    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 18px 20px;
     margin: 8px 0;
 }
 
 .sim-card-red {
-    border-left: 4px solid #e01b24;
+    border-left: 3px solid #ff453a;
 }
 
 .sim-card-amber {
-    border-left: 4px solid #f6d32d;
+    border-left: 3px solid #ffd60a;
 }
 
 .sim-card-purple {
-    border-left: 4px solid #9141ac;
+    border-left: 3px solid #bf5af2;
 }
 
-.sim-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.sim-desc {
-    font-size: 13px;
-    color: #a4b3c6;
-    line-height: 1.5;
-}
-
-/* Redaction Inspection Box */
-.redaction-box {
-    background-color: #0b0d12;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    color: #c0caf5;
-    line-height: 1.5;
-}
-
-/* Slender Skill Progress Bars */
 progressbar.slender-progress trough {
-    min-height: 8px;
-    max-height: 8px;
-    border-radius: 4px;
+    min-height: 6px;
+    max-height: 6px;
+    border-radius: 3px;
     background-color: rgba(255, 255, 255, 0.08);
 }
 
 progressbar.slender-progress progress {
-    min-height: 8px;
-    max-height: 8px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #3584e4 0%, #2ec27e 100%);
+    min-height: 6px;
+    max-height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #007aff 0%, #30d158 100%);
 }

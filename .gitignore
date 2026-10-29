@@ -1,0 +1,41 @@
+# ==============================================================================
+# Grit — Production .gitignore
+# ==============================================================================
+
+# Compiled Binaries & Build Output
+build/
+bin/
+*.o
+*.so
+*.so.*
+*.dylib
+*.dll
+*.a
+libgrit.so
+lib/*.so
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.pytest_cache/
+
+# Databases & Runtime State
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+# Runtime Log Files
+*.log
+/tmp/grit_*
+
+# Editor & OS Metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

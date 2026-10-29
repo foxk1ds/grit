@@ -113,27 +113,27 @@ The mentor acts as an intelligent agent: it explains what happened in plain term
 
 | Path | Purpose |
 |---|---|
-| [**`run.sh`**](file:///home/foxkids/grit/run.sh) | Automated build and runner script for GUI, simulations, and test suites |
-| [**`src/gui/mentor_agent_app.py`**](file:///home/foxkids/grit/src/gui/mentor_agent_app.py) | **Primary Desktop GUI**: Socratic Mentor Chat & Autonomous Agent Log Monitor |
-| [**`src/gui/app.py`**](file:///home/foxkids/grit/src/gui/app.py) | Classic Incident Triage & Tabbed Monitor Desktop GUI |
-| [**`src/main.c`**](file:///home/foxkids/grit/src/main.c) | Native GTK4 pure C desktop application implementation |
-| [**`src/core/types.h`**](file:///home/foxkids/grit/src/core/types.h) | Shared domain types (`Incident`, `CommandSafety`, `MentorResponse`, etc.) |
-| [**`src/core/watcher.h`**](file:///home/foxkids/grit/src/core/watcher.h) | Watcher prototypes and `WatcherContext` struct definition |
-| [**`src/core/watcher.c`**](file:///home/foxkids/grit/src/core/watcher.c) | Inotify + eventfd polling loop and POSIX regex redaction engine |
-| [**`src/core/simulator.h`**](file:///home/foxkids/grit/src/core/simulator.h) | Attack scenario simulation engine header |
-| [**`src/core/simulator.c`**](file:///home/foxkids/grit/src/core/simulator.c) | Attack scenario injector (`SCENARIO_SSH_BRUTE`, `SCENARIO_SUDO_ESCALATION`, etc.) |
-| [**`src/mentor/command_guard.h`**](file:///home/foxkids/grit/src/mentor/command_guard.h) | Command guard evaluation prototypes |
-| [**`src/mentor/command_guard.c`**](file:///home/foxkids/grit/src/mentor/command_guard.c) | Explicit allowlist/denylist safety classification tree |
-| [**`src/mentor/llm_client.h`**](file:///home/foxkids/grit/src/mentor/llm_client.h) | Multi-turn Ollama orchestration client header |
-| [**`src/mentor/llm_client.c`**](file:///home/foxkids/grit/src/mentor/llm_client.c) | Asynchronous libcurl worker thread & GTK idle bridge |
-| [**`src/db/db.h`**](file:///home/foxkids/grit/src/db/db.h) | SQLite3 persistence & skill tree engine header |
-| [**`src/db/db.c`**](file:///home/foxkids/grit/src/db/db.c) | SQLite3 WAL implementation with prepared statements and virtual levels |
-| [**`src/db/schema.sql`**](file:///home/foxkids/grit/src/db/schema.sql) | Relational database schema with foreign keys and cascade deletes |
-| [**`tests/test_full_pipeline.c`**](file:///home/foxkids/grit/tests/test_full_pipeline.c) | Complete end-to-end architecture pipeline verification suite |
-| [**`tests/test_watcher_guard.c`**](file:///home/foxkids/grit/tests/test_watcher_guard.c) | Inotify, eventfd interrupt, and redaction test suite |
-| [**`tests/test_llm_client.c`**](file:///home/foxkids/grit/tests/test_llm_client.c) | Ollama JSON payload, parser, and async thread test suite |
-| [**`CMakeLists.txt`**](file:///home/foxkids/grit/CMakeLists.txt) | C23 build system configuration (GTK4, SQLite3, libcurl, pthreads) |
-| [**`ACHIEVMENT.md`**](file:///home/foxkids/grit/ACHIEVMENT.md) | Technical achievement summary and benchmark verification matrix |
+| [**`run.sh`**](run.sh) | Automated build and runner script for GUI, simulations, and test suites |
+| [**`src/gui/mentor_agent_app.py`**](src/gui/mentor_agent_app.py) | **Primary Desktop GUI**: Socratic Mentor Chat & Autonomous Agent Log Monitor |
+| [**`src/gui/app.py`**](src/gui/app.py) | Classic Incident Triage & Tabbed Monitor Desktop GUI |
+| [**`src/main.c`**](src/main.c) | Native GTK4 pure C desktop application implementation |
+| [**`src/core/types.h`**](src/core/types.h) | Shared domain types (`Incident`, `CommandSafety`, `MentorResponse`, etc.) |
+| [**`src/core/watcher.h`**](src/core/watcher.h) | Watcher prototypes and `WatcherContext` struct definition |
+| [**`src/core/watcher.c`**](src/core/watcher.c) | Inotify + eventfd polling loop and POSIX regex redaction engine |
+| [**`src/core/simulator.h`**](src/core/simulator.h) | Attack scenario simulation engine header |
+| [**`src/core/simulator.c`**](src/core/simulator.c) | Attack scenario injector (`SCENARIO_SSH_BRUTE`, `SCENARIO_SUDO_ESCALATION`, etc.) |
+| [**`src/mentor/command_guard.h`**](src/mentor/command_guard.h) | Command guard evaluation prototypes |
+| [**`src/mentor/command_guard.c`**](src/mentor/command_guard.c) | Explicit allowlist/denylist safety classification tree |
+| [**`src/mentor/llm_client.h`**](src/mentor/llm_client.h) | Multi-turn Ollama orchestration client header |
+| [**`src/mentor/llm_client.c`**](src/mentor/llm_client.c) | Asynchronous libcurl worker thread & GTK idle bridge |
+| [**`src/db/db.h`**](src/db/db.h) | SQLite3 persistence & skill tree engine header |
+| [**`src/db/db.c`**](src/db/db.c) | SQLite3 WAL implementation with prepared statements and virtual levels |
+| [**`src/db/schema.sql`**](src/db/schema.sql) | Relational database schema with foreign keys and cascade deletes |
+| [**`tests/test_full_pipeline.c`**](tests/test_full_pipeline.c) | Complete end-to-end architecture pipeline verification suite |
+| [**`tests/test_watcher_guard.c`**](tests/test_watcher_guard.c) | Inotify, eventfd interrupt, and redaction test suite |
+| [**`tests/test_llm_client.c`**](tests/test_llm_client.c) | Ollama JSON payload, parser, and async thread test suite |
+| [**`CMakeLists.txt`**](CMakeLists.txt) | C23 build system configuration (GTK4, SQLite3, libcurl, pthreads) |
+| [**`ACHIEVMENT.md`**](ACHIEVMENT.md) | Technical achievement summary and benchmark verification matrix |
 
 ---
 
@@ -196,9 +196,9 @@ When launched, Grit auto-detects these models in the drop-down selector. If Olla
 
 Grit includes a high-definition Freedesktop / GNOME HIG compliant application icon and desktop launcher:
 
-- **Scalable Vector Icon**: [`data/icons/hicolor/scalable/apps/org.grit.workstation.svg`](file:///home/foxkids/grit/data/icons/hicolor/scalable/apps/org.grit.workstation.svg)
+- **Scalable Vector Icon**: [`data/icons/hicolor/scalable/apps/org.grit.workstation.svg`](data/icons/hicolor/scalable/apps/org.grit.workstation.svg)
 - **High-Resolution PNG Icons**: Multi-resolution renders (16px to 512px) in `data/icons/hicolor/<size>/apps/`
-- **Desktop Entry**: [`data/org.grit.workstation.desktop`](file:///home/foxkids/grit/data/org.grit.workstation.desktop)
+- **Desktop Entry**: [`data/org.grit.workstation.desktop`](data/org.grit.workstation.desktop)
 - **Four Workstation Modes**:
   1. 💬 **Mentor**: Interactive Socratic dialogue, proactive incident alerts, 1-click safe command runner, and Command Guard badges.
   2. 🛡️ **Log Triage**: Dedicated live security stream, KPI metric cards, and an interactive C23 credential redaction sandbox.
