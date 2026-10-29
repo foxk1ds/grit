@@ -1,0 +1,508 @@
+/* ==========================================================================
+   Grit Modern Defensive Workstation Design System (Libadwaita / GNOME HIG)
+   ========================================================================== */
+
+/* Base Window & Surface Palette */
+window {
+    background-color: #12151c;
+    color: #e4e7eb;
+}
+
+/* HeaderBar Brand & Badges */
+.grit-brand-box {
+    margin-right: 12px;
+}
+
+.grit-brand-title {
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+.grit-brand-subtitle {
+    font-size: 11px;
+    color: #78aeed;
+    font-weight: 600;
+}
+
+.grit-latency-badge {
+    background-color: alpha(#3584e4, 0.16);
+    color: #78aeed;
+    border: 1px solid alpha(#3584e4, 0.38);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.grit-pulse-active {
+    color: #33d17a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.grit-pulse-inactive {
+    color: #77767b;
+    font-size: 12px;
+}
+
+.grit-pill-online {
+    background-color: alpha(#26a269, 0.22);
+    color: #33d17a;
+    border: 1px solid alpha(#26a269, 0.45);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.grit-pill-offline {
+    background-color: alpha(#e5a50a, 0.22);
+    color: #f6d32d;
+    border: 1px solid alpha(#e5a50a, 0.45);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* View Switcher Styling */
+viewswitcher button {
+    border-radius: 8px;
+    margin: 2px 3px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 180ms ease-in-out;
+}
+
+viewswitcher button:checked {
+    background-color: alpha(#3584e4, 0.25);
+    color: #ffffff;
+    box-shadow: inset 0 -2px 0 #3584e4;
+}
+
+/* Chat Stream Layout */
+.chat-container {
+    background-color: #101218;
+}
+
+/* Hero Welcome Card */
+.hero-card {
+    background: linear-gradient(135deg, #182030 0%, #131722 100%);
+    border: 1px solid alpha(#3584e4, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 12px 18px 20px 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.hero-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.hero-subtitle {
+    font-size: 13px;
+    color: #a4b3c6;
+    line-height: 1.5;
+}
+
+.hero-pill {
+    background-color: alpha(#2ec27e, 0.15);
+    color: #57e389;
+    border: 1px solid alpha(#2ec27e, 0.35);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* User Message Bubble */
+.user-bubble-box {
+    margin-left: 90px;
+    margin-right: 14px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, #1c4a75 0%, #153859 100%);
+    color: #ffffff;
+    border: 1px solid alpha(#3584e4, 0.35);
+    border-radius: 18px 18px 4px 18px;
+    padding: 12px 18px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+.user-bubble-text {
+    color: #f6f8fa;
+    font-size: 13.5px;
+    line-height: 1.5;
+}
+
+/* Mentor Message Bubble */
+.mentor-bubble-box {
+    margin-right: 80px;
+    margin-left: 14px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.mentor-bubble {
+    background-color: #1a1e28;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px 18px 18px 18px;
+    padding: 18px 22px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.26);
+}
+
+.mentor-header-title {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: #78aeed;
+    letter-spacing: 0.3px;
+}
+
+.mentor-header-tag {
+    font-size: 11px;
+    color: #8c8c9a;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.mentor-body-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #e0e3eb;
+}
+
+/* Socratic Callout Box */
+.socratic-callout {
+    background-color: alpha(#2aa198, 0.1);
+    border-left: 4px solid #2aa198;
+    border-radius: 4px 10px 10px 4px;
+    padding: 14px 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.socratic-callout-title {
+    font-weight: 800;
+    font-size: 11.5px;
+    color: #33d17a;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Terminal Command Snippet Card */
+.command-card {
+    background-color: #0d0f14;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.command-card-header {
+    background-color: #161922;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+}
+
+.command-card-dots {
+    color: #555761;
+    font-size: 10px;
+    margin-right: 4px;
+}
+
+.command-card-body {
+    padding: 10px 16px;
+    background-color: #0b0d12;
+}
+
+.command-card-code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'DejaVu Sans Mono', monospace;
+    font-size: 13px;
+    color: #57e389;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+}
+
+/* Safety Badges */
+.badge-safe {
+    background-color: alpha(#26a269, 0.25);
+    color: #57e389;
+    border: 1px solid alpha(#26a269, 0.55);
+    font-size: 10.5px;
+    font-weight: 800;
+    border-radius: 5px;
+    padding: 2px 8px;
+    letter-spacing: 0.5px;
+}
+
+.badge-caution {
+    background-color: alpha(#e5a50a, 0.25);
+    color: #f8e45c;
+    border: 1px solid alpha(#e5a50a, 0.55);
+    font-size: 10.5px;
+    font-weight: 800;
+    border-radius: 5px;
+    padding: 2px 8px;
+    letter-spacing: 0.5px;
+}
+
+.badge-blocked {
+    background-color: alpha(#c01c28, 0.25);
+    color: #ff7b63;
+    border: 1px solid alpha(#c01c28, 0.55);
+    font-size: 10.5px;
+    font-weight: 800;
+    border-radius: 5px;
+    padding: 2px 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Incident Alert Card */
+.alert-card {
+    background: linear-gradient(135deg, alpha(#c01c28, 0.12) 0%, alpha(#1c161a, 0.8) 100%);
+    border: 1px solid alpha(#c01c28, 0.35);
+    border-left: 5px solid #e01b24;
+    border-radius: 6px 14px 14px 6px;
+    padding: 16px 20px;
+    margin-right: 80px;
+    margin-left: 14px;
+    box-shadow: 0 4px 12px rgba(192, 28, 40, 0.15);
+}
+
+/* Tool Execution Result Card */
+.tool-result-card {
+    background-color: #141822;
+    border: 1px solid alpha(#3584e4, 0.35);
+    border-left: 5px solid #3584e4;
+    border-radius: 6px 14px 14px 6px;
+    padding: 14px 18px;
+    margin-right: 80px;
+    margin-left: 14px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Suggestion Chips */
+.chip-button {
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    background-color: alpha(#1f2430, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    color: #d1d5db;
+    transition: all 160ms ease-in-out;
+}
+
+.chip-button:hover {
+    background-color: alpha(#3584e4, 0.22);
+    border-color: #3584e4;
+    color: #ffffff;
+}
+
+/* Input Bar Styling */
+.chat-entry-capsule {
+    border-radius: 28px;
+    padding: 6px 16px;
+    background-color: #1a1e28;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: all 180ms ease;
+}
+
+.chat-entry-capsule:focus-within {
+    border-color: #3584e4;
+    box-shadow: 0 0 0 2px alpha(#3584e4, 0.3);
+}
+
+.send-button-circular {
+    border-radius: 9999px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+}
+
+/* ==========================================================================
+   Dedicated Views: Triage, Defense Matrix, Lab & Tools
+   ========================================================================== */
+
+/* KPI Stat Cards (Triage & Overview) */
+.kpi-card {
+    background-color: #171b24;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 4px;
+}
+
+.kpi-card-cyan {
+    border-top: 3px solid #3584e4;
+}
+
+.kpi-card-red {
+    border-top: 3px solid #e01b24;
+}
+
+.kpi-card-green {
+    border-top: 3px solid #2ec27e;
+}
+
+.kpi-card-amber {
+    border-top: 3px solid #f6d32d;
+}
+
+.kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.kpi-label {
+    font-size: 11.5px;
+    color: #8c93a0;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+}
+
+/* Analyst Profile Banner */
+.analyst-profile-card {
+    background: linear-gradient(135deg, #1b2333 0%, #141a27 100%);
+    border: 1px solid alpha(#3584e4, 0.32);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 16px 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.analyst-rank-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.4px;
+}
+
+.analyst-rank-badge {
+    background: linear-gradient(135deg, #26a269 0%, #1b7348 100%);
+    color: #ffffff;
+    border-radius: 9999px;
+    padding: 4px 14px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Defense Skill Cards */
+.skill-card {
+    background-color: #181c26;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 6px 0;
+    transition: all 180ms ease;
+}
+
+.skill-card:hover {
+    border-color: alpha(#3584e4, 0.4);
+    background-color: #1c212e;
+}
+
+.skill-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.skill-level-pill {
+    background-color: alpha(#3584e4, 0.18);
+    color: #78aeed;
+    border: 1px solid alpha(#3584e4, 0.35);
+    border-radius: 9999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Achievement Trophies */
+.achievement-card {
+    background-color: #161922;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 4px;
+}
+
+.achievement-card-unlocked {
+    border-color: alpha(#2ec27e, 0.35);
+    background: linear-gradient(135deg, alpha(#2ec27e, 0.08) 0%, #161922 100%);
+}
+
+/* Attack Simulator Cards */
+.sim-card {
+    background-color: #171b24;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 8px 0;
+}
+
+.sim-card-red {
+    border-left: 4px solid #e01b24;
+}
+
+.sim-card-amber {
+    border-left: 4px solid #f6d32d;
+}
+
+.sim-card-purple {
+    border-left: 4px solid #9141ac;
+}
+
+.sim-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.sim-desc {
+    font-size: 13px;
+    color: #a4b3c6;
+    line-height: 1.5;
+}
+
+/* Redaction Inspection Box */
+.redaction-box {
+    background-color: #0b0d12;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #c0caf5;
+    line-height: 1.5;
+}
+
+/* Slender Skill Progress Bars */
+progressbar.slender-progress trough {
+    min-height: 8px;
+    max-height: 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+progressbar.slender-progress progress {
+    min-height: 8px;
+    max-height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #3584e4 0%, #2ec27e 100%);
+}

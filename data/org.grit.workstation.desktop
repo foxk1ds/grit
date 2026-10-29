@@ -1,0 +1,22 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Grit
+GenericName=Cybersecurity Mentor & Log Monitor
+Comment=Offline, privacy-first cybersecurity mentor and native Linux system log monitor
+Icon=org.grit.workstation
+Exec=bash -c "cd $(dirname %k) && ./run.sh agent"
+Terminal=false
+Categories=System;Security;Development;Monitor;
+Keywords=security;cyber;mentor;linux;log;inotify;auth;triage;firewall;ollama;
+StartupNotify=true
+StartupWMClass=org.grit.workstation
+Actions=SimulateSSH;SimulateSudo;
+
+[Desktop Action SimulateSSH]
+Name=Simulate SSH Brute Force
+Exec=bash -c "cd $(dirname %k) && ./run.sh simulate ssh_brute"
+
+[Desktop Action SimulateSudo]
+Name=Simulate Sudo Abuse
+Exec=bash -c "cd $(dirname %k) && ./run.sh simulate sudo_abuse"
