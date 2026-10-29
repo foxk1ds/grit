@@ -1,3 +1,4 @@
+![Grit banner](docs/image.png)
 # Grit — Offline Cybersecurity Mentor & Autonomous Log Agent
 
 [![C Standard](https://img.shields.io/badge/standard-C23-blue.svg)](https://en.wikipedia.org/wiki/C23_(C_standard_revision))
